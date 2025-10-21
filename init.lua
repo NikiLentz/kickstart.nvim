@@ -100,9 +100,15 @@ vim.g.have_nerd_font = true
 
 -- Make line numbers default
 vim.o.number = true
+
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
+
+vim.o.tabstop = 2       -- Number of spaces tabs count for
+vim.o.shiftwidth = 2    -- Size of an indent
+vim.o.expandtab = true  -- Use spaces instead of tabs
+vim.o.softtabstop = 2 -- Number of spaces a <Tab> counts for while performing editing operations, like inserting a <Tab> or using <BS>
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -247,7 +253,6 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -283,6 +288,21 @@ require('lazy').setup({
       },
     },
   },
+
+  {
+  'rmagatti/auto-session',
+  config = function()
+    require('auto-session').setup({
+      log_level = 'error',
+      auto_session_enable_last_session = false,
+      auto_session_root_dir = vim.fn.stdpath('data').."/sessions/",
+      auto_session_enabled = true,
+      auto_save_enabled = true,
+      auto_restore_enabled = true,
+      auto_session_suppress_dirs = { '~/', '~/Downloads', '~/Documents' },
+    })
+  end
+},
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -909,8 +929,8 @@ require('lazy').setup({
     event = 'VimEnter',
     config = function()
       -- Enable copilot
-      vim.g.copilot_no_tab_map = true
-      vim.keymap.set('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
+      --vim.g.copilot_no_tab_map = true
+      --vim.keymap.set('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
     end,
   },
 
