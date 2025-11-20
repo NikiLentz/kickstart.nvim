@@ -712,7 +712,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -879,7 +879,10 @@ require('lazy').setup({
           --   end,
           -- },
         },
-        opts = {},
+        config = function()
+          -- Load custom snippets
+          require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/lua/snippets" })
+        end,
       },
       'folke/lazydev.nvim',
     },
@@ -887,31 +890,15 @@ require('lazy').setup({
     --- @type blink.cmp.Config
     opts = {
       keymap = {
-        -- 'default' (recommended) for mappings similar to built-in completions
-        --   <c-y> to accept ([y]es) the completion.
-        --    This will auto-import if your LSP supports it.
-        --    This will expand snippets if the LSP sent a snippet.
-        -- 'super-tab' for tab to accept
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
-        --
-        -- For an understanding of why the 'default' preset is recommended,
-        -- you will need to read `:help ins-completion`
-        --
-        -- No, but seriously. Please read `:help ins-completion`, it is really good!
-        --
-        -- All presets have the following mappings:
-        -- <tab>/<s-tab>: move to right/left of your snippet expansion
-        -- <c-space>: Open menu or open docs if already open
-        -- <c-n>/<c-p> or <up>/<down>: Select next/previous item
-        -- <c-e>: Hide menu
-        -- <c-k>: Toggle signature help
-        --
-        -- See :h blink-cmp-config-keymap for defining your own keymap
+        -- Custom keymaps:
+        -- <C-j>: Accept completion AND jump forward in snippets
+        -- <C-k>: Jump backward in snippets
+        -- <C-space>: Open/toggle completion menu
+        -- <C-n>/<C-p>: Navigate completions
+        -- <C-e>: Hide menu
         preset = 'default',
-
-        -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-        --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+        ['<C-j>'] = { 'accept', 'snippet_forward', 'fallback' },
+        ['<C-k>'] = { 'snippet_backward', 'fallback' },
       },
 
       appearance = {
@@ -929,6 +916,7 @@ require('lazy').setup({
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
+          snippets = { score_offset = 200 },  -- Prioritize snippets above everything
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
       },
@@ -965,15 +953,15 @@ require('lazy').setup({
     end,
   },
   -- github copilot
-  {
-    'github/copilot.vim',
-    event = 'VimEnter',
-    config = function()
-      -- Enable copilot
-      --vim.g.copilot_no_tab_map = true
-      --vim.keymap.set('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
-    end,
-  },
+  -- {
+  --   'github/copilot.vim',
+  --   event = 'VimEnter',
+  --   config = function()
+  --     -- Enable copilot
+  --     --vim.g.copilot_no_tab_map = true
+  --     --vim.keymap.set('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
+  --   end,
+  -- },
 
 
   -- Highlight todo, notes, etc in comments
